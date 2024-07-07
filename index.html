@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Shortener</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .shortener {
+            margin-bottom: 20px;
+        }
+        .shortener input {
+            margin-bottom: 10px;
+            padding: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .shortener button {
+            padding: 10px;
+            width: 100%;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .shortener button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 10px;
+            font-size: 1.2em;
+            color: #333;
+        }
+        .links {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Link Shortener</h1>
+        <div class="shortener">
+            <input type="text" id="originalUrl" placeholder="Enter URL to shorten" required>
+            <button onclick="shortenUrl()">Shorten</button>
+            <div class="result" id="result"></div>
+        </div>
+        <div class="links" id="links">
+            <h2>Shortened Links</h2>
+            <ul id="linkList"></ul>
+        </div>
+    </div>
+
+    <script>
+        function generateShortUrl() {
+            return Math.random().toString(36).substring(2, 8);
+        }
+
+        function shortenUrl() {
+            const originalUrl = document.getElementById('originalUrl').value;
+            if (!originalUrl) {
+                document.getElementById('result').innerText = 'Please enter a valid URL.';
+                return;
+            }
+
+            const shortUrl = generateShortUrl();
+            const shortenedLinks = JSON.parse(localStorage.getItem('shortenedLinks')) || {};
+            shortenedLinks[shortUrl] = originalUrl;
+            localStorage.setItem('shortenedLinks', JSON.stringify(shortenedLinks));
+
+            document.getElementById('result').innerHTML = `Shortened URL: <a href="${originalUrl}" target="_blank">https://shorturl.kr/${shortUrl}</a>`;
+            displayShortenedLinks();
+        }
+
+        function displayShortenedLinks() {
+            const shortenedLinks = JSON.parse(localStorage.getItem('shortenedLinks')) || {};
+            const linkList = document.getElementById('linkList');
+            linkList.innerHTML = '';
+
+            for (const shortUrl in shortenedLinks) {
+                const originalUrl = shortenedLinks[shortUrl];
+                const li = document.createElement('li');
+                li.innerHTML = `<a href="${originalUrl}" target="_blank">https://short.ly/${shortUrl}</a> - ${originalUrl}`;
+                linkList.appendChild(li);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', displayShortenedLinks);
+    </script>
+</body>
+</html>
